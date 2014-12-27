@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+   <Manager pathname=""/> <!-- disables storage of sessions across restarts -->
+   <Resource name="BeanManager"
+     		 auth="Container"
+			 type="javax.enterprise.inject.spi.BeanManager"
+			 factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+
+	<Resource name="jdbc/FinanceiroDB"
+   			 auth="Container" 
+   			 type="javax.sql.DataSource" 
+   			 maxActive="100"
+   			 maxIdle="30"
+   			 maxWait="10000"
+   			 username="root"
+   			 password="<password>"
+   			 driverClassName="com.mysql.jdbc.Driver"
+   			 url="jdbc:mysql://localhost:3306/Financeiro"/>
+   
+   	<Resource name="mail/Session" 
+   			auth="Container" 
+   			type="javax.mail.Session" 
+   			mail.smtp.host="<host server>"
+   			mail.smtp.port="587"
+   			mail.smtp.auth="true" 
+   			mail.smtp.user="<user>"
+   			mail.smtp.password="<password>"/>
+
+   	
+</Context>
