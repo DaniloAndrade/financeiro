@@ -21,6 +21,6 @@ public class DAOFactory {
 	public <T> DAO<T> create(final InjectionPoint injectionPoint){
 		ParameterizedType parameterizedType = (ParameterizedType) injectionPoint.getType();
 		Class classe = (Class) parameterizedType.getActualTypeArguments()[0];
-		return new DAO(classe, em);
+		return new DAO<>(classe, em);
 	}
 }
