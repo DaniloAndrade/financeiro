@@ -11,6 +11,7 @@ import javax.persistence.PersistenceException;
 
 import br.com.andradesolucoes.exceptions.DAOException;
 import br.com.andradesolucoes.infra.Transactional;
+import org.apache.log4j.Logger;
 
 @Transactional
 @Interceptor
@@ -23,23 +24,25 @@ public class TransactionInterceptor implements Serializable {
 
 	@Inject
 	private EntityManager em;
+	@Inject
+	private Logger logger;
 	
 	@AroundInvoke
 	public Object intercept(InvocationContext ctx) throws Exception{
 		Object resultado = null;
 		em.getTransaction().begin();
-		System.out.println("iniciando transa��o...");
+		logger.info("iniciando transação");
 		try{
 			resultado = ctx.proceed();
 			em.getTransaction().commit();
 			em.clear();
-			System.out.println("fechando transa��o...");
+			logger.info("commitando transação");
 			return resultado;
 		
 		}catch(PersistenceException e){
-			System.out.println("transa��o n�o efetivada: "+ e.getMessage());
+			logger.info("realizando rollback transação",e);
 			em.getTransaction().rollback();
-			throw new DAOException("transa��o n�o efetivada",e);
+			throw new DAOException("transação não efetivada",e);
 		}
 			
 	}
