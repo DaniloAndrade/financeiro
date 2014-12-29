@@ -1,26 +1,31 @@
 package br.com.andradesolucoes.repository;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-public interface Repository<T> {
+/**
+ * Created by danilo on 28/12/14.
+ */
+public interface Repository<T> extends Serializable{
+	void add(T t);
 
-	public void adiciona(T t);
+	void remove(T t);
 
-	public void remove(T t);
+	T update(T t);
 
-	public T atualiza(T t);
+	List<T> listAll();
 
-	public List<T> listaTodos();
+	Long count();
+
+	List<T> list(int firstResult, int maxResults);
+
+	T findBy(Serializable id);
 	
-	public Long contaTodos();
+	List<T> findBy(Map<String,Object> filtro);
 
-	public List<T> listaTodosPaginada(int firstResult, int maxResults);
+	List<T> findBy(String namedQuery,Map<String,Object> filtro);
 
-	public T buscaPorId(Long id);
-	
-	public T carrega(T t);
-	
-	public Object carregaDependecia(Object object);
-	
+	T load(T t);
 	
 }

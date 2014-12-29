@@ -1,10 +1,11 @@
 package br.com.andradesolucoes.beans;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import br.com.andradesolucoes.entitys.Conta;
+import br.com.andradesolucoes.entitys.Idioma;
+import br.com.andradesolucoes.entitys.Usuario;
+import br.com.andradesolucoes.negocio.ContaNegocio;
+import br.com.andradesolucoes.negocio.UsuarioNegocio;
+import br.com.andradesolucoes.repository.Repository;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
@@ -12,13 +13,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import br.com.andradesolucoes.entitys.Conta;
-import br.com.andradesolucoes.entitys.Idioma;
-import br.com.andradesolucoes.entitys.Usuario;
-import br.com.andradesolucoes.negocio.ContaNegocio;
-import br.com.andradesolucoes.negocio.UsuarioNegocio;
-import br.com.andradesolucoes.repository.IIdiomaRepository;
+import java.io.Serializable;
+import java.util.*;
 
 @Named
 @SessionScoped
@@ -40,7 +36,7 @@ public class ContextoBean implements Serializable{
 	private ContaNegocio contaNegocio;
 	
 	@Inject
-	private IIdiomaRepository	idiomaRepository;
+	private Repository<Idioma> idiomaRepository;
 	
 	
 	public Usuario getUsuarioLogado() {
@@ -116,16 +112,20 @@ public class ContextoBean implements Serializable{
 	
 	
 	public void setIdiomaUsuario(String idiomatxt){
-		Idioma idioma = idiomaRepository.buscarPorISO(idiomatxt);
+
+		Map<String,Object> filtro = new HashMap<>();
+		filtro.put("codigo", idiomatxt);
+		Optional<Idioma> first = idiomaRepository.findBy(Idioma.BUSCAR_POR_ISO, filtro).stream().findFirst();
 		
-		
-		this.usuarioLogado = usuarioNegocio.buscarPorId(this.getUsuarioLogado().getCodigo());
-		this.usuarioLogado.setIdioma(idioma);
-		usuarioNegocio.salvar(usuarioLogado);
-		String[] info = idioma.getCodigoISO().split("_");
-		Locale locale = new Locale(info[0], info[1]);
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.getViewRoot().setLocale(locale);
-	
+		first.ifPresent(i -> {
+			this.usuarioLogado = usuarioNegocio.buscarPorId(this.getUsuarioLogado().getCodigo());
+			this.usuarioLogado.setIdioma(i);
+			usuarioNegocio.salvar(usuarioLogado);
+			String[] info = i.getCodigoISO().split("_");
+			Locale locale = new Locale(info[0], info[1]);
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.getViewRoot().setLocale(locale);
+		});
+
 	}
 }

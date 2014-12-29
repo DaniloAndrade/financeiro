@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 import br.com.andradesolucoes.entitys.Idioma;
 import br.com.andradesolucoes.infra.Transactional;
-import br.com.andradesolucoes.repository.DAO;
+import br.com.andradesolucoes.repository.Repository;
 
 @Named
 @RequestScoped @Transactional
@@ -22,21 +22,21 @@ public class IdiomaBean implements Serializable{
 
 	@SuppressWarnings("cdi-ambiguous-dependency")
 	@Inject
-	private DAO<Idioma> daoIdioma;
+	private Repository<Idioma> daoIdioma;
 	
 	private List<Idioma> idiomas;
 	
 	
 	public List<Idioma> idiomas(){
 		if(idiomas == null){
-			idiomas = daoIdioma.listaTodos();
+			idiomas = daoIdioma.listAll();
 		}
 		return idiomas;
 	}
 
 
 	public Idioma carregar(Idioma idioma) {
-		return daoIdioma.buscaPorId(idioma.getCodigo());
+		return daoIdioma.findBy(idioma.getCodigo());
 	}
 	
 	

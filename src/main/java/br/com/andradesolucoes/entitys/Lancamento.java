@@ -26,7 +26,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @NamedQueries(value={
 		@NamedQuery(name="buscarPorPeriodoEConta" ,query="select l from Lancamento l where l.conta = :conta and (l.data between :dataInicio and :dataFim) order by l.data asc"),
 		@NamedQuery(name="buscarPorDataMaioIgualEConta", query="select l from Lancamento l where l.conta = :conta and l.data >= :data order by l.data asc"),
-		@NamedQuery(name="buscarPorDataMenorIgualEConta", query="select l from Lancamento l where l.conta = :conta and l.data <= :data order by l.data asc")})
+		@NamedQuery(name="buscarPorDataMenorIgualEConta", query="select l from Lancamento l where l.conta = :conta and l.data <= :data order by l.data asc"),
+		@NamedQuery(name = "buscarPorContaEMenorIgualData", query = "select l from Lancamento l, Categoria c where l.categoria = c and l.conta = :conta and l.data <= :data")
+})
 public class Lancamento {
 
 	public final static String BUSCAR_POR_PERIODO_E_CONTA = "buscarPorPeriodoEConta";

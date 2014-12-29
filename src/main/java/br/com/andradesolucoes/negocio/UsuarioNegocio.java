@@ -1,63 +1,65 @@
 package br.com.andradesolucoes.negocio;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-
 import br.com.andradesolucoes.entitys.Usuario;
 import br.com.andradesolucoes.entitys.enums.Permissao;
 import br.com.andradesolucoes.exceptions.NegocioException;
 import br.com.andradesolucoes.exceptions.UtilException;
-import br.com.andradesolucoes.repository.ContaRepository;
-import br.com.andradesolucoes.repository.UsuarioRepository;
+import br.com.andradesolucoes.qualify.Criar;
+import br.com.andradesolucoes.qualify.Excluir;
+import br.com.andradesolucoes.repository.Repository;
 import br.com.andradesolucoes.util.EmailUtil;
 import br.com.andradesolucoes.util.MensagemUtil;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @RequestScoped
 public class UsuarioNegocio implements Serializable {
 	
+
 	@Inject
-	private UsuarioRepository repository;
+	private Repository<Usuario> usuarios;
 	
 	@Inject
-	private ContaRepository contaRepository;
+	private Event<Usuario> event;
 	
-	@Inject
-	private CategoriaNegocio categoriaNegocio;
-	
+
 	public Usuario buscarPorId(Long id){
-		return repository.buscaPorId(id);
+		return usuarios.findBy(id);
 	}
 	
 	public Usuario buscarPorLogin(String login){
-		return repository.buscarPorLogin(login);
+		Map<String,Object> filtro = new HashMap<>();
+		filtro.put("login",login);
+		return usuarios.findBy(filtro).get(0);
 	}
 	
 	public Usuario salvar(Usuario usuario){
-		
 		if(usuario.getCodigo() ==null || usuario.getCodigo() ==0){
 			usuario.addPermissao(Permissao.ROLE_USUARIO);
-			usuario =  this.repository.atualiza(usuario);
-			categoriaNegocio.salvarEstruturaPadrao(usuario);
+			usuario =  usuarios.update(usuario);
+			event.select(new AnnotationLiteral<Criar>() {}).fire(usuario);
 			return usuario;
-			
 		}else {
-			return this.repository.atualiza(usuario);
+			return usuarios.update(usuario);
 		}
 	}
 	
 	public void excluir(Usuario usuario){
-		categoriaNegocio.excluir(usuario);
-		contaRepository.removePorUsuario(usuario);
+		event.select(new AnnotationLiteral<Excluir>() {}).fire(usuario);
 		usuario.removeTodasPermissao();
-		this.repository.remove(usuario);
+		usuarios.remove(usuario);
 	}
 	
 	public List<Usuario> listar() {
-		return this.repository.listaTodos();
+		return usuarios.listAll();
 	}
 	
 	public void enviarEmailPosCadastramento(Usuario usuario) throws NegocioException{

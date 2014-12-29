@@ -1,26 +1,26 @@
 package br.com.andradesolucoes.negocio;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import br.com.andradesolucoes.entitys.Cheque;
 import br.com.andradesolucoes.entitys.ChequeID;
 import br.com.andradesolucoes.entitys.Conta;
 import br.com.andradesolucoes.entitys.Lancamento;
 import br.com.andradesolucoes.exceptions.NegocioException;
-import br.com.andradesolucoes.infra.Transactional;
-import br.com.andradesolucoes.repository.IChequeRepository;
+import br.com.andradesolucoes.repository.Repository;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChequeNegocio implements Serializable{
 	
 	@Inject
-	private IChequeRepository repository;
+	private Repository<Cheque> repository;
 	
 	public void salvar(Cheque cheque){
-		this.repository.salvar(cheque);
+		this.repository.update(cheque);
 	}
 	
 	
@@ -50,20 +50,22 @@ public class ChequeNegocio implements Serializable{
 
 
 	public Cheque carregar(ChequeID chequeID) {
-		return this.repository.carregar(chequeID);
+		return this.repository.findBy(chequeID);
 	}
 	
 	public void excluir(Cheque cheque) throws NegocioException{
 		if(cheque.getSituacao() == Cheque.SITUACAO_CHEQUE_NAO_EMITIDO){
-			this.repository.excluir(cheque);
+			this.repository.remove(cheque);
 		}else{
-			throw new NegocioException("Não é possivel excluir cheque, situação não permite esta operação.");
+			throw new NegocioException("Não é possivel remove cheque, situação não permite esta operação.");
 		}
 	}
 	
 	
 	public List<Cheque> listar(Conta conta){
-		return this.repository.listar(conta);
+		Map<String,Object> filtro = new HashMap<>();
+		filtro.put("conta", conta);
+		return repository.findBy(Cheque.BUSCAR_POR_CONTA, filtro);
 	}
 	
 	
@@ -71,18 +73,18 @@ public class ChequeNegocio implements Serializable{
 		if(cheque.isSituacao(Cheque.SITUACAO_CHEQUE_NAO_EMITIDO) 
 				|| cheque.isSituacao(Cheque.SITUACAO_CHEQUE_CANCELADO)){
 			cheque.setSituacao(Cheque.SITUACAO_CHEQUE_CANCELADO);
-			this.repository.salvar(cheque);
+			this.repository.update(cheque);
 		}else{
 			throw new NegocioException("Não é possivel cancelar cheque, situação não permite esta operação.");
 		}
 	}
 	
 	public void baixarCheque(ChequeID chequeID, Lancamento lancamento){
-		Cheque cheque = this.repository.carregar(chequeID);
+		Cheque cheque = this.repository.findBy(chequeID);
 		if(cheque != null){
 			cheque.setSituacao(Cheque.SITUACAO_CHEQUE_BAIXADO);
 			cheque.setLancamento(lancamento);
-			this.repository.salvar(cheque);
+			this.repository.update(cheque);
 		}
 	}
 	

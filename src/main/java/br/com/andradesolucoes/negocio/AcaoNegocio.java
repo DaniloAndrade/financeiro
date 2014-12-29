@@ -1,39 +1,42 @@
 package br.com.andradesolucoes.negocio;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import br.com.andradesolucoes.acao.AcaoVirtual;
 import br.com.andradesolucoes.entitys.Acao;
 import br.com.andradesolucoes.entitys.Usuario;
 import br.com.andradesolucoes.exceptions.NegocioException;
-import br.com.andradesolucoes.repository.IAcaoRepository;
+import br.com.andradesolucoes.repository.Repository;
 import br.com.andradesolucoes.util.YahooFinanceUtil;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AcaoNegocio {
 	
 	@Inject
-	private IAcaoRepository acaoRepository;
+	private Repository<Acao> acoes;
 	
 	public Acao salvar(Acao acao){
-		return this.acaoRepository.salvar(acao);
+		return this.acoes.update(acao);
 	}
 	
 	
 	public void excluir(Acao acao){
-		this.acaoRepository.excluir(acao);
+		this.acoes.remove(acao);
 	}
 	
 	public Acao carregar(String codigo){
-		return this.acaoRepository.carregar(codigo);
+		return this.acoes.findBy(codigo);
 	}
 	
 	public List<Acao> listar(Usuario usuario){
-		return this.acaoRepository.listar(usuario);
+		Map<String,Object> filtro = new HashMap<>();
+		filtro.put("usuario", usuario);
+		return acoes.findBy(Acao.BUSCAR_POR_USUARIO,filtro);
 	}
 	
 	public List<AcaoVirtual> listarAcaoVirtual(Usuario usuario) throws NegocioException{

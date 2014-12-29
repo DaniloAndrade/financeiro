@@ -35,7 +35,7 @@ public class AnnotationConverter implements Converter {
 	                && !"".equals(value)) {  
 	  
 			 	String key = getValueKey(value);
-	            // adiciona item como atributo do componente  
+	            // add item como atributo do componente
 	            this.addAttribute(ui, key, value);  
 	  
 	            return key;
@@ -104,7 +104,7 @@ public class AnnotationConverter implements Converter {
 		  
 		            BaseEntity entity = (BaseEntity) value;  
 		  
-		            // adiciona item como atributo do componente  
+		            // add item como atributo do componente
 		            this.addAttribute(component, entity);  
 		  
 		            Long codigo = entity.getId();  

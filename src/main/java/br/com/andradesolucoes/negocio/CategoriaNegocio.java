@@ -1,23 +1,29 @@
 package br.com.andradesolucoes.negocio;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-
 import br.com.andradesolucoes.entitys.Categoria;
 import br.com.andradesolucoes.entitys.Usuario;
-import br.com.andradesolucoes.repository.ICategoriaRepository;
+import br.com.andradesolucoes.qualify.Criar;
+import br.com.andradesolucoes.qualify.Excluir;
+import br.com.andradesolucoes.repository.Repository;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RequestScoped
 public class CategoriaNegocio implements Serializable{
-	
+
 	@Inject
-	private ICategoriaRepository repository;
+	private Repository<Categoria> repository;
 	
 	public List<Categoria> listar(Usuario usuario){
-		return repository.listar(usuario);
+		Map<String,Object> filtro = new HashMap<>();
+		filtro.put("usuario", usuario);
+		return repository.findBy(Categoria.BUSCAR_POR_USUARIO, filtro);
 	}
 	
 	
@@ -32,7 +38,7 @@ public class CategoriaNegocio implements Serializable{
 		boolean mudouFator = pai.getFator() != categoria.getFator();
 		
 		categoria.setFator(pai.getFator());
-		categoria = repository.salvar(categoria);
+		categoria = repository.update(categoria);
 		
 		if(mudouFator){
 			categoria = this.carregar(categoria.getCodigo());
@@ -44,7 +50,7 @@ public class CategoriaNegocio implements Serializable{
 
 
 	public Categoria carregar(Integer codigo) {
-		return repository.carregar(codigo);
+		return repository.findBy(codigo);
 	}
 
 
@@ -52,7 +58,7 @@ public class CategoriaNegocio implements Serializable{
 		if (categoria.getFilhos()!=null) {
 			for (Categoria filho : categoria.getFilhos()) {
 				filho.setFator(fator);
-				this.repository.salvar(filho);
+				this.repository.add(filho);
 				this.replicarFator(filho, fator);
 			}
 		}
@@ -61,7 +67,7 @@ public class CategoriaNegocio implements Serializable{
 	public void  excluir(Categoria categoria) {
 		
 		if(categoria.getPai() == null){
-			this.repository.excluir(categoria);
+			this.repository.remove(categoria);
 		}else{
 			
 			Categoria pai = categoria.getPai();
@@ -69,27 +75,25 @@ public class CategoriaNegocio implements Serializable{
 			
 			categoria.setPai(null);
 			
-			this.repository.atualiza(pai);
-			this.repository.excluir(categoria);
+			this.repository.update(pai);
+			this.repository.remove(categoria);
 		}
 		
 	}
 	
 	
-	public void  excluir(Usuario usuario) {
-		List<Categoria> categorias = repository.listar(usuario);
+	public void  excluir(@Observes @Excluir Usuario usuario) {
+		List<Categoria> categorias = listar(usuario);
 		for (Categoria categoria : categorias) {
-			this.repository.excluir(categoria);
+			this.repository.remove(categoria);
 		}
 		
 	}
 	
 	
-	public void salvarEstruturaPadrao(Usuario usuario){
+	public void salvarEstruturaPadrao(@Observes @Criar Usuario usuario){
 		Categoria despesas = new Categoria(null, usuario, "DESPESAS", -1);
-		
-		
-		
+
 		despesas.addCategoria(new Categoria(null, usuario, "Moradia", -1));
 		despesas.addCategoria(new Categoria(null, usuario, "Alimetação", -1));
 		despesas.addCategoria(new Categoria(null, usuario, "Vestuário", -1));
@@ -99,31 +103,15 @@ public class CategoriaNegocio implements Serializable{
 		despesas.addCategoria(new Categoria(null, usuario, "Saúde", -1));
 		despesas.addCategoria(new Categoria(null, usuario, "Lazer", -1));
 		despesas.addCategoria(new Categoria(null, usuario, "Despesas Financeiras", -1));
-		repository.salvar(despesas);
+		repository.add(despesas);
 		
 		Categoria receitas = new Categoria(null, usuario, "RECEITAS", 1);
 		receitas.addCategoria(new Categoria(null, usuario, "Salário", 1));
 		receitas.addCategoria(new Categoria(null, usuario, "Restituições", 1));
 		receitas.addCategoria(new Categoria(null, usuario, "Rendimento", 1));
 		
-		repository.salvar(receitas);
-		
-		/*despesas = repository.salvar(despesas);
-		repository.salvar(new Categoria(despesas, usuario, "Moradia", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Alimeta��o", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Vestu�rio", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Deslocamento", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Cuidados Pessoais", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Educa��o", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Sa�de", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Lazer", -1));
-		repository.salvar(new Categoria(despesas, usuario, "Despesas Financeiras", -1));
-		
-		Categoria receitas = new Categoria(null, usuario, "RECEITAS", 1);
-		
-		repository.salvar(new Categoria(receitas, usuario, "Sal�rio", 1));
-		repository.salvar(new Categoria(receitas, usuario, "Restitui��es", 1));
-		repository.salvar(new Categoria(receitas, usuario, "Rendimento", 1));*/
+		repository.add(receitas);
+
 	}
 	
 	
