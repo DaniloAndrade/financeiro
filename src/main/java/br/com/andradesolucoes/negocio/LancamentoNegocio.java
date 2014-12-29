@@ -30,9 +30,9 @@ public class LancamentoNegocio implements Serializable{
 	
 	
 	public Lancamento salvar(Lancamento  lancamento){
-		Categoria categoria = (Categoria) categorias.load(lancamento.getCategoria());
-		Conta conta = (Conta) contas.load(lancamento.getConta());
-		Usuario usuario = (Usuario) usarios.load(lancamento.getUsuario());
+		Categoria categoria = categorias.load(lancamento.getCategoria());
+		Conta conta = contas.load(lancamento.getConta());
+		Usuario usuario = usarios.load(lancamento.getUsuario());
 		lancamento.setCategoria(categoria);
 		lancamento.setConta(conta);
 		lancamento.setUsuario(usuario);
