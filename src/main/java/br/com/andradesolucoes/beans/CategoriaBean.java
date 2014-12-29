@@ -42,8 +42,7 @@ public class CategoriaBean {
 		this.editada.setPai(pai);
 		this.mostraEdicao = true;
 	}
-	
-	
+
 	public void selecionar(NodeSelectEvent event){
 		this.editada = (Categoria) event.getTreeNode().getData();
 		Categoria pai = this.editada.getPai();
@@ -77,8 +76,7 @@ public class CategoriaBean {
 		this.categoriaTree = null;
 		this.categoriasSelect = null;
 	}
-	
-	
+
 	public TreeNode getCategoriasTree(){
 		
 		if(this.categoriaTree == null){
@@ -89,7 +87,6 @@ public class CategoriaBean {
 		
 		return this.categoriaTree;
 	}
-
 
 	private void montaDadosTree(TreeNode pai,
 			List<Categoria> categorias) {
@@ -102,7 +99,6 @@ public class CategoriaBean {
 		}
 	}
 	
-	
 	public List<SelectItem> getCategoriasSelect(){
 		if(this.categoriasSelect==null){
 			this.categoriasSelect = new ArrayList<SelectItem>();
@@ -112,7 +108,6 @@ public class CategoriaBean {
 		
 		return this.categoriasSelect;
 	}
-
 
 	private void montaDadosSelect(List<SelectItem> select,
 			List<Categoria> categorias, String prefixo) {
@@ -126,13 +121,6 @@ public class CategoriaBean {
 			}
 		}
 	}
-
-
-	
-
-
-	
-
 
 	public Categoria getEditada() {
 		return editada;
@@ -154,8 +142,4 @@ public class CategoriaBean {
 	}
 
 
-	
-	
-	
-	
 }

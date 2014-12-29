@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+
 @Named
 @ViewScoped
 public class LancamentoBean implements Serializable{
@@ -173,7 +175,6 @@ public class LancamentoBean implements Serializable{
 				return;
 			}
 		}
-		//zeraListas();
 	}
 	
 	public List<BigDecimal> getSaldos() {

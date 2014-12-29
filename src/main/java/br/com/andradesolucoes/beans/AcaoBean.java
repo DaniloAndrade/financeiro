@@ -22,7 +22,6 @@ public class AcaoBean {
 
 	@Inject
 	private ContextoBean contextoBean;
-	
 	@Inject
 	private AcaoNegocio acaoNegocio;
 	
@@ -43,24 +42,18 @@ public class AcaoBean {
 		zerar();
 	}
 
-
-
-
 	private void zerar() {
 		this.selecionada = new AcaoVirtual();
 		this.lista= null;
 		this.modelPorValor = null;
 	}
-	
-	
-	
+
 	@Transactional
 	public void excluir(){
 		acaoNegocio.excluir(this.selecionada.getAcao());
 		zerar();
 	}
-	
-	
+
 	public List<AcaoVirtual> getLista(){
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -74,8 +67,7 @@ public class AcaoBean {
 		
 		return this.lista;
 	}
-	
-	
+
 	public String getLinkCodigoAcao(){
 		if(this.selecionada !=null){
 			this.linkCodigoAcao = acaoNegocio.montaLinkAcao(this.selecionada.getAcao());
@@ -84,8 +76,7 @@ public class AcaoBean {
 		}
 		return this.linkCodigoAcao;
 	}
-	
-	
+
 	public AcaoVirtual getSelecionada() {
 		return selecionada;
 	}
@@ -100,8 +91,6 @@ public class AcaoBean {
 		return modelPorQuantidade;
 	}
 
-	
-	
 	public ChartModel getModelPorValor(){
 		if(modelPorValor == null){
 			modelPorValor = new PieChartModel();
@@ -112,8 +101,7 @@ public class AcaoBean {
 		
 		return modelPorValor;
 	}
-	
-	
+
 	public void setSelecionada(AcaoVirtual selecionada) {
 		this.selecionada = selecionada;
 	}

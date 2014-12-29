@@ -17,24 +17,18 @@ import java.io.Serializable;
 import java.util.List;
 
 
-//@ManagedBean
 @Named
 @RequestScoped
 public class UsuarioBean implements Serializable{
 	
 	
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
 	private UsuarioNegocio usuarioNegocio;
 	@Inject
 	private ContaNegocio contaNegocio;
-	
-	
+
 	private Usuario usuario = new Usuario();
 	private String confirmaSenha;
 	private String destinoSalvar;
@@ -42,12 +36,7 @@ public class UsuarioBean implements Serializable{
 	private List<Usuario> lista;
 	
 	private Conta conta = new Conta();
-	
-	
-	
-	
-	
-	
+
 	public String novo(){
 		this.destinoSalvar = "usuarioSucesso";
 		this.usuario = new Usuario();
@@ -66,14 +55,9 @@ public class UsuarioBean implements Serializable{
 			return null;
 		}
 		
-		/*if(usuario.getCodigo() == 0){
-			usuario.setCodigo(null);
-		}*/
 		Usuario usuarioSalvo = usuarioNegocio.salvar(usuario);
 		
-		
-		
-		 
+
 		if(this.conta.getDescricao() != null){
 			this.conta.setUsuario(usuarioSalvo);
 			this.conta.setFavorita(true);
@@ -111,8 +95,6 @@ public class UsuarioBean implements Serializable{
 	
 	@Transactional
 	public String ativar(){
-		
-		
 		if(this.usuario.isAtivo()){
 			this.usuario.setAtivo(false);
 		}else{
@@ -131,7 +113,6 @@ public class UsuarioBean implements Serializable{
 			usuario.addPermissao(Permissao.valueOf(permissao));
 		}
 		usuarioNegocio.salvar(usuario);
-		//usuarioNegocio.
 	}
 	
 	
