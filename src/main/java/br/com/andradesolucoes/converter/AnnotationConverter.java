@@ -16,17 +16,11 @@ public class AnnotationConverter implements Converter {
 	
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent ui, String value) {
-		//EntityManager em = new JPAUtil().getEntityManager();	
 		if (value != null) { 
-			 
 			Object object = this.getAttributesFrom(ui).get(value);
-			/*if(object.getClass().isAnnotationPresent(Entity.class))
-				object = em.getReference(object.getClass(), object);
-				*/
-				//em.merge(object);
 			 return object;  
 	     }  
-		 return null;  
+		return null;  
 	}
 
 	@Override
@@ -84,47 +78,4 @@ public class AnnotationConverter implements Converter {
 	    	 this.getAttributesFrom(component).put(key, o);  
 	     }
 	  }  
-	
-	
-	
-	/*
-	 * public class SimpleEntityConverter implements Converter {  
-  
-		    public Object getAsObject(FacesContext ctx, UIComponent component, String value) {  
-		        if (value != null) {  
-		            return this.getAttributesFrom(component).get(value);  
-		        }  
-		        return null;  
-		    }  
-		  
-		    public String getAsString(FacesContext ctx, UIComponent component, Object value) {  
-		  
-		        if (value != null  
-		                && !"".equals(value)) {  
-		  
-		            BaseEntity entity = (BaseEntity) value;  
-		  
-		            // add item como atributo do componente
-		            this.addAttribute(component, entity);  
-		  
-		            Long codigo = entity.getId();  
-		            if (codigo != null) {  
-		                return String.valueOf(codigo);  
-		            }  
-		        }  
-		  
-		        return (String) value;  
-		    }  
-		  
-		    protected void addAttribute(UIComponent component, BaseEntity o) {  
-		        String key = o.getId().toString(); // codigo da empresa como chave neste caso  
-		        this.getAttributesFrom(component).put(key, o);  
-		    }  
-		  
-		    protected Map<String, Object> getAttributesFrom(UIComponent component) {  
-		        return component.getAttributes();  
-		    }  
-  
-}  
-	 */
 }
